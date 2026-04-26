@@ -12,9 +12,38 @@ from openai import OpenAI
 # 基本設定
 # =========================
 st.set_page_config(page_title="Anatomy Card Maker", layout="wide")
-
+col1, col2 = st.columns([2,1])
 st.title("Anatomy Card Maker")
-st.write("上傳解剖圖 → AI 擷取中英配對 → 網路校正 → 下載 Anki CSV")
+
+col1, col2 = st.columns([2,1])
+
+with col1:
+    st.markdown("""
+### 上傳解剖圖 → 自動變單字卡
+
+不用自己抄，直接開始背
+""")
+
+
+st.markdown("""
+#### 怎麼用？
+1. 上傳圖片
+2. 點「AI 擷取」
+3. 開始做單字卡
+
+#### 怎麼背？
+- 翻面看答案
+- 按熟悉度：
+
+```text
+1 不會 → 很快再出
+2 普通 → 稍微延後
+3 還行 → 之後複習
+4 很熟 → 今天不再出現
+""")
+
+with col2:
+    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGJvemJqZXNraW55Z2xjOXk1YXhiZzAwZmh3eTQ1N2N6b2F0a3gyYyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/TwPVBXmCkCl0URWrVj/giphy.gif",width=250)
 
 
 # =========================
@@ -136,7 +165,7 @@ if uploaded_file is not None:
             index=0
         )
 
-        run_button = st.button("AI 擷取 + 網路校正", type="primary")
+        run_button = st.button("文字擷取及校正", type="primary")
 
 
     if run_button and "anki_df" not in st.session_state:
@@ -153,7 +182,7 @@ if uploaded_file is not None:
 第二步：
 使用網路資料交叉檢查每一組中英配對是否正確。
 如果配對正確，Status 設為 OK。
-如果中文翻譯明顯錯誤，Status 設為 FIX，Checked_Chinese 填入較標準的中文翻譯。
+如果中文翻譯明顯錯誤，Status 設為 FIX，Checked_Chinese 填入較標準的繁體中文翻譯。
 如果無法確定，Status 設為 UNKNOWN。
 
 重要規則：
@@ -175,7 +204,7 @@ UNKNOWN
 Note 簡短說明即可。
 """
 
-        with st.spinner("AI 正在擷取與查核，可能需要一點時間..."):
+        with st.spinner("逼餔逼餔..."):
             response = client.responses.create(
                 model=model_name,
                 tools=[
@@ -272,7 +301,7 @@ Note 簡短說明即可。
 st.subheader("線上單字卡練習")
 
 if "anki_df" not in st.session_state:
-    st.info("先上傳圖片並按『AI 擷取 + 網路校正』，下面才會出現單字卡")
+    st.info("先上傳圖片並按『文字擷取及校正』，下面才會出現單字卡")
 
 else:
     # 建立 cards
